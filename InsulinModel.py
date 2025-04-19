@@ -1,62 +1,52 @@
+
+#  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  
+class Muscle:
+  def __init__(self, organism):
+    pass
+# 4. Muscle Breakdown (Catabolism for Gluconeogenesis)
+
+# Role: Provides amino acids to liver for gluconeogenesis.
+
+# Triggers: Cortisol, severe fasting, insulin deficiency.
+
+# Effect: Indirectly raises glucose; slow, maladaptive.
+
+# 5. Muscle (via GLUT-4)
+
+# Role: Major site of glucose uptake and storage as glycogen.
+
+# Triggers: Insulin, exercise.
+
+# Dynamics:
+
+# Insulin-mediated uptake via GLUT-4 translocation.
+
+# Exercise-mediated uptake independent of insulin (AMPK pathway).
+
+
+# Effect: Rapid uptake within 10–30 min after insulin; also drops glucose during activity.
+
+#  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  
+
+class Adipose:
+  def __init__(self, organism):
+    self.organism = organism
+    
 """
-
----
-
-
-
-
----
-
-4. Muscle Breakdown (Catabolism for Gluconeogenesis)
-
-Role: Provides amino acids to liver for gluconeogenesis.
-
-Triggers: Cortisol, severe fasting, insulin deficiency.
-
-Effect: Indirectly raises glucose; slow, maladaptive.
-
-
-
----
-
-II. Glucose Sinks
-
-These are the actors that decrease blood glucose.
-
-
----
-
-5. Muscle (via GLUT-4)
-
-Role: Major site of glucose uptake and storage as glycogen.
-
-Triggers: Insulin, exercise.
-
-Dynamics:
-
-Insulin-mediated uptake via GLUT-4 translocation.
-
-Exercise-mediated uptake independent of insulin (AMPK pathway).
-
-
-Effect: Rapid uptake within 10–30 min after insulin; also drops glucose during activity.
-
-
-
----
-
 6. Adipose Tissue
 
 Role: Uptakes glucose for fat synthesis and storage.
 
 Triggers: Insulin.
 
-Effect: Mild-to-moderate, dependent on nutritional state.
+Effect: Mild-to-moderate effect on glucose, dependent on nutritional state.
+"""
 
-
-
----
-
+#  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  
+class Brain:
+  def __init__(self, organism):
+    self.organism = organism
+"""
 7. Brain
 
 Role: Constant glucose consumer, not insulin-dependent.
@@ -66,109 +56,23 @@ Triggers: Continuous need.
 Dynamics: Uses glucose at ~5 mg/kg/min in dogs; steady but can't modulate based on availability.
 
 Effect: Background sink, ~20% of daily glucose.
+"""
 
+#  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  
 
-
----
-
-8. Kidneys (Filtration & Glucosuria)
-
-Role: Filter glucose; excrete it if over renal threshold (~180–200 mg/dL in dogs).
-
-Effect: Passive safety valve; if glucose is high, spill it into urine → mild glucose lowering.
-
-
-
----
-
+class IIT: #Insulin independent tissues including RBCs
+  def __init__(self, organism):
+    self.organism = organism
+"""
 9. Red Blood Cells & Other Insulin-Independent Tissues
 
 Role: Baseline uptake.
 
 Effect: Minor constant drain.
 
-
-
----
-
-III. Hormonal Regulators and Modulators
-
-These actors indirectly shape glucose behavior through signals.
-
-
----
-
-10. Insulin
-
-Role: Master controller of uptake and storage.
-
-Triggers: High glucose, gut hormones (GLP-1).
-
-Dynamics: Rapid secretion after meals; synthetic subq onset ~15–60 mins.
-
-Effects:
-
-Increases GLUT-4 activity.
-
-Inhibits liver glucose production.
-
-Promotes fat/muscle glucose storage.
-
-
-
-
----
-
-11. Glucagon
-
-Role: Increases glucose via liver glycogen breakdown.
-
-Triggers: Low glucose, high amino acids, fasting.
-
-Effect: Rapid glucose rise; counterbalances insulin.
-
-
-
----
-
-12. Cortisol
-
-Role: Mobilizes energy for stress; promotes gluconeogenesis.
-
-Triggers: Stress, circadian rhythm (high in early morning).
-
-Dynamics: Slow (~30–90 min delay), long-lasting.
-
-Effects:
-
-Stimulates liver + kidney glucose production.
-
-Promotes insulin resistance.
-
-Encourages protein catabolism → amino acids for gluconeogenesis.
-
-
-
-
----
-
-13. Epinephrine (Adrenaline)
-
-Role: Rapid stress response.
-
-Triggers: Fear, pain, fight/flight.
-
-Effects:
-
-Liver glucose dump.
-
-Inhibits insulin secretion.
-
-Stimulates lipolysis (energy mobilization).
-
-Vasoconstriction (affects perfusion/glucose distribution).
-
-
+"""
+#  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  
+"""
 
 
 ---
@@ -198,32 +102,8 @@ Slightly inhibit glucagon.
 Delay gastric emptying → slow glucose rise.
 
 
-
-
 ---
 
-IV. Pharmacological & Misc
-
-
----
-
-16. Exogenous Insulin
-
-Vetsulin, NPH, Detemir, Glargine, Regular, etc.
-
-Delivered subq, lagging effect, varies by formulation.
-
-Mimics or replaces pancreatic insulin.
-
-
-
----
-
-17. Glucose Monitors (Libre etc)
-
-Measure interstitial glucose, delayed ~10–15 min from blood.
-
-Sensitive to noise, compression, temperature.
 
 
 19. Inflammation / Illness / Infection
@@ -261,12 +141,16 @@ Ketogenesis
 
 """
 
+#  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  
+
 class Hydration:
   def __init__(self, organism):
     self.organism=organism
   # Dehydration can concentrate glucose and reduce perfusion.
   # Affects kidney function and insulin distribution.
   pass
+
+#  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  
 
 class Liver:
   def __init__(self,organism):
@@ -290,9 +174,13 @@ class Liver:
 
 # Effect: Rapid (minutes), peaking within 15–60 mins.
 
+#  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  
+
 class Pancreas:
   def __init__(self,organism):
     pass
+
+#  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  
     
 class Kidneys:
   def __init__(self,organism):
@@ -304,6 +192,15 @@ class Kidneys:
 # Triggers: Low insulin, high cortisol.
 
 # Effect: Minor contributor, ~10% of total gluconeogenesis.
+"""
+8. Kidneys (Filtration & Glucosuria)
+
+Role: Filter glucose; excrete it if over renal threshold (~180–200 mg/dL in dogs).
+
+Effect: Passive safety valve; if glucose is high, spill it into urine → mild glucose lowering.
+"""
+
+#  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  
 
 class Intestine:
   def __init__(self,organism):
@@ -320,7 +217,9 @@ class Intestine:
 # Effect: Major post-prandial source. Fat and fiber slow absorption.
 
 
-class Activity(self,organism):
+#  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  
+
+class Activity(self,organism): # maybe just put this in muscle
   pass
 
 # 18. Exercise / Movement
@@ -331,19 +230,96 @@ class Activity(self,organism):
 
 # Also enhances insulin sensitivity.
 
+#  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  
+
 class CGM:
   def __init__(self, organism):
     pass
+
+# 17. Glucose Monitors (Libre etc)
+
+# Measure interstitial glucose, delayed ~10–15 min from blood.
+
+# Sensitive to noise, compression, temperature.
+#  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  
+class Exogenous_Insulin:
+  pass
+  
+  # 16. Exogenous Insulin
+  
+  # Vetsulin, NPH, Detemir, Glargine, Regular, etc.
+  
+  # Delivered subq, lagging effect, varies by formulation.
+  
+  # Mimics or replaces pancreatic insulin.
+
+#  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  
 
 class Canine:
   def __init__(self, initial_bgl = 200):
     self.hydration = Hydration(self)
     self.BGL = initial_bgl
     self.cortisol
+    """
+        
+    12. Cortisol
+    
+    Role: Mobilizes energy for stress; promotes gluconeogenesis.
+    
+    Triggers: Stress, circadian rhythm (high in early morning).
+    
+    Dynamics: Slow (~30–90 min delay), long-lasting.
+    
+    Effects:
+    
+    Stimulates liver + kidney glucose production.
+    
+    Promotes insulin resistance.
+    
+    Encourages protein catabolism → amino acids for gluconeogenesis.
+
+    """
     self.cytokines
     self.insulin
+    """
+    10. Insulin
+
+    Role: Master controller of uptake and storage.
+    
+    Triggers: High glucose, gut hormones (GLP-1).
+    
+    Dynamics: Rapid secretion after meals; synthetic subq onset ~15–60 mins.
+    
+    Effects:
+    
+    Increases GLUT-4 activity.
+    
+    Inhibits liver glucose production.
+    
+    Promotes fat/muscle glucose storage.
+    """
     self.glucagon
+    self.epinephrine
+    """
+        13. Epinephrine (Adrenaline)
+    
+    Role: Rapid stress response.
+    
+    Triggers: Fear, pain, fight/flight.
+    
+    Effects:
+    
+    Liver glucose dump.
+    
+    Inhibits insulin secretion.
+    
+    Stimulates lipolysis (energy mobilization).
+    
+    Vasoconstriction (affects perfusion/glucose distribution).
+    """
     self.somatostatin
     self.growth_hormone
     
+
+#  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  
     
