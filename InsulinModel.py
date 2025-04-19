@@ -1,63 +1,7 @@
 """
 
-Hell yes. Let’s build the "cast of characters"—the full ensemble of actors that regulate blood glucose, both obvious and subtle. This includes organs, hormones, transporters, and processes, each with a short summary of their role, triggers, time scale, and direction of effect on glucose.
-
-I’ll break this into sections for clarity: Glucose Sources, Sinks, Sensors, and Modulators. And yeah, we’ll include realistic time delays, PID-like behaviors, and cross-interactions.
-
-
 ---
 
-I. Glucose Sources
-
-These are the actors that increase blood glucose.
-
-
----
-
-1. Liver
-
-Role: Glucose production via glycogenolysis and gluconeogenesis.
-
-Triggers:
-
-Low blood glucose (absolute and slope).
-
-Hormones: cortisol, glucagon, epinephrine.
-
-Fasting state or circadian rhythm (e.g. dawn phenomenon).
-
-
-Dynamics: PID-like—responds to level (P), rate of change (D), and sometimes anticipatory meal patterns (I-like).
-
-Limits: Finite glycogen stores (~12–18h fasting reserve in dogs).
-
-Effect: Rapid (minutes), peaking within 15–60 mins.
-
-
-
----
-
-2. Intestines (Duodenum, Jejunum)
-
-Role: Absorb glucose from digested food.
-
-Triggers: Food arrival.
-
-Dynamics: Slow onset (starts ~15–30 mins), peaks ~60–90 mins, can last 3+ hours depending on food type.
-
-Effect: Major post-prandial source. Fat and fiber slow absorption.
-
-
-
----
-
-3. Kidney (Gluconeogenesis in Cortex)
-
-Role: Produces small amounts of glucose during prolonged fasting.
-
-Triggers: Low insulin, high cortisol.
-
-Effect: Minor contributor, ~10% of total gluconeogenesis.
 
 
 
@@ -282,21 +226,6 @@ Measure interstitial glucose, delayed ~10–15 min from blood.
 Sensitive to noise, compression, temperature.
 
 
-
----
-
-18. Exercise / Movement
-
-Muscle glucose uptake increases independent of insulin.
-
-Effect can last hours after intense activity.
-
-Also enhances insulin sensitivity.
-
-
-
----
-
 19. Inflammation / Illness / Infection
 
 Cytokines (like TNF-α, IL-6) can cause insulin resistance.
@@ -342,11 +271,69 @@ class Hydration:
 class Liver:
   def __init__(self,organism):
     pass
+# 1. Liver
 
-class Kidneys:
+# Role: Glucose production via glycogenolysis and gluconeogenesis.
+
+# Triggers:
+
+# Low blood glucose (absolute and slope).
+
+# Hormones: cortisol, glucagon, epinephrine.
+
+# Fasting state or circadian rhythm (e.g. dawn phenomenon).
+
+
+# Dynamics: PID-like—responds to level (P), rate of change (D), and sometimes anticipatory meal patterns (I-like).
+
+# Limits: Finite glycogen stores (~12–18h fasting reserve in dogs).
+
+# Effect: Rapid (minutes), peaking within 15–60 mins.
+
+class Pancreas:
   def __init__(self,organism):
     pass
     
+class Kidneys:
+  def __init__(self,organism):
+    pass
+# 3. Kidney (Gluconeogenesis in Cortex)
+
+# Role: Produces small amounts of glucose during prolonged fasting.
+
+# Triggers: Low insulin, high cortisol.
+
+# Effect: Minor contributor, ~10% of total gluconeogenesis.
+
+class Intestine:
+  def __init__(self,organism):
+    self.organism=organism
+
+# 2. Intestines (Duodenum, Jejunum)
+
+# Role: Absorb glucose from digested food.
+
+# Triggers: Food arrival.
+
+# Dynamics: Slow onset (starts ~15–30 mins), peaks ~60–90 mins, can last 3+ hours depending on food type.
+
+# Effect: Major post-prandial source. Fat and fiber slow absorption.
+
+
+class Activity(self,organism):
+  pass
+
+# 18. Exercise / Movement
+
+# Muscle glucose uptake increases independent of insulin.
+
+# Effect can last hours after intense activity.
+
+# Also enhances insulin sensitivity.
+
+class CGM:
+  def __init__(self, organism):
+    pass
 
 class Canine:
   def __init__(self, initial_bgl = 200):
