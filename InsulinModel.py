@@ -1,3 +1,5 @@
+"""
+
 Hell yes. Let’s build the "cast of characters"—the full ensemble of actors that regulate blood glucose, both obvious and subtle. This includes organs, hormones, transporters, and processes, each with a short summary of their role, triggers, time scale, and direction of effect on glucose.
 
 I’ll break this into sections for clarity: Glucose Sources, Sinks, Sensors, and Modulators. And yeah, we’ll include realistic time delays, PID-like behaviors, and cross-interactions.
@@ -301,20 +303,60 @@ Cytokines (like TNF-α, IL-6) can cause insulin resistance.
 
 Fever raises basal metabolic rate and glucose production.
 
+Ways Glucose is produced:
+Hepatic Glycogenolysis
+  Very Fast (Minutes)
+    Triggered by glucagon, epi, cortisol, low insulin
+    Stimulated by Cytokines (Inflammation)
+Hepatic Gluconeogenesis
+  breaking down metabolic byproducts (protein breakdown, fat breakdown, lactate - yielded up by cori cycle, ketogenesis, alanine cycle, whatever)
+    Triggered by Glucagon, Cortisol, Low Insulin, Growth Hormone, strongly upregulated by inflammation (e.g. cortisol, cytokines)
+Muscle Glycogenolysis
+  Generally doesn't increase blood glucose because use is local, but it lowers demand (at least until you run out of glycogen)
+Digestion
+  Carbohydrate
+    Complex (60-180 minutes)
+    Simple (15-30 minutes)
+Renal Gluconeogenesis
+  Like a smaller 15% version of the liver's gluconeogenesis
+    Triggers?
+
+Ketogenesis 
+  No glucose produced here, but reduces brain glucose need and can indirectly reduce hepatic glucose output demand. 
+  Trigger (low insulin, high glucagon, prolonged fasting or carb restriction This is like step one of hepatic gluconeogenesis)
+  
+?
 
 
----
-
-20. Hydration & Electrolytes
-
-Dehydration can concentrate glucose and reduce perfusion.
-
-Affects kidney function and insulin distribution.
 
 
+"""
 
----
+class Hydration:
+  def __init__(self, organism):
+    self.organism=organism
+  # Dehydration can concentrate glucose and reduce perfusion.
+  # Affects kidney function and insulin distribution.
+  pass
 
-Let me know if you want this encoded into a simulation architecture—like assigning every one of these a "delta-glucose" effect per timestep, conditionally triggered by environment or signals. Or if you want a visual map tying them all together.
+class Liver:
+  def __init__(self,organism):
+    pass
 
+class Kidneys:
+  def __init__(self,organism):
+    pass
+    
 
+class Canine:
+  def __init__(self, initial_bgl = 200):
+    self.hydration = Hydration(self)
+    self.BGL = initial_bgl
+    self.cortisol
+    self.cytokines
+    self.insulin
+    self.glucagon
+    self.somatostatin
+    self.growth_hormone
+    
+    
