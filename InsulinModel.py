@@ -75,36 +75,6 @@ Effect: Minor constant drain.
 """
 
 
----
-
-14. Growth Hormone
-
-Role: Increases insulin resistance, especially in fat.
-
-Triggers: Sleep, puberty, stress.
-
-Effect: Mild contributor to glucose elevation in chronic cases.
-
-
-
----
-
-15. Incretins (GLP-1, GIP)
-
-Role: Gut-derived hormones that stimulate insulin after eating.
-
-Effect:
-
-Boost insulin release.
-
-Slightly inhibit glucagon.
-
-Delay gastric emptying → slow glucose rise.
-
-
----
-
-
 
 19. Inflammation / Illness / Infection
 
@@ -280,6 +250,19 @@ class Canine:
 
     """
     self.cytokines
+    self.incretins
+        
+    # 15. Incretins (GLP-1, GIP)
+    
+    # Role: Gut-derived hormones that stimulate insulin after eating.
+    
+    # Effect:
+    
+    # Boost insulin release.
+    
+    # Slightly inhibit glucagon.
+    
+    # Delay gastric emptying → slow glucose rise.
     self.insulin
     """
     10. Insulin
@@ -319,6 +302,18 @@ class Canine:
     """
     self.somatostatin
     self.growth_hormone
+    
+    
+    # 14. Growth Hormone
+    
+    # Role: Increases insulin resistance, especially in fat.
+    
+    # Triggers: Sleep, puberty, stress.
+    
+    # Effect: Mild contributor to glucose elevation in chronic cases.
+
+
+
     
 
 #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  
