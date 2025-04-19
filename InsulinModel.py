@@ -242,7 +242,6 @@ class Canine:
     self.BGL = initial_bgl
     self.cortisol
     """
-        
     12. Cortisol
     
     Role: Mobilizes energy for stress; promotes gluconeogenesis.
@@ -336,19 +335,24 @@ class Canine:
     """
     self.somatostatin
     self.growth_hormone
-    
-    
     # 14. Growth Hormone
-    
     # Role: Increases insulin resistance, especially in fat.
-    
     # Triggers: Sleep, puberty, stress.
-    
     # Effect: Mild contributor to glucose elevation in chronic cases.
-
+  def update(self, time_interval_minutes = 10):
+    for organ in organ_list:
+      organ.update()
+      """
+      So how did this organ get changed over the interval
+      and now at the end of that, what is the organ doing to everything else (e.g. chemical changes)
+      """
+      
 
 
     
 
 #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  
     
+if __name__ == "__main__":
+  print("Good luck!")
+  Benny = Canine()
