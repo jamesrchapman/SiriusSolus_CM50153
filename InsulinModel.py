@@ -2,6 +2,7 @@
 #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  
 class Muscle:
   def __init__(self, organism):
+    # Has a Glycogen Reservoir
     pass
 # 4. Muscle Breakdown (Catabolism for Gluconeogenesis)
 
@@ -23,6 +24,15 @@ class Muscle:
 
 # Exercise-mediated uptake independent of insulin (AMPK pathway).
 
+# Ketogenesis 
+#   No glucose produced here, but reduces brain glucose need and can indirectly reduce hepatic glucose output demand. 
+#   Trigger (low insulin, high glucagon, prolonged fasting or carb restriction This is like step one of hepatic gluconeogenesis)
+  
+# Muscle Glycogenolysis
+#   Generally doesn't increase blood glucose because use is local, but it lowers demand (at least until you run out of glycogen)
+# (conversely, glycogenesis - insulin mediated - exercise induced increase of insulin sensitivity
+
+# Muscle lacks Glucose 6 Phosphatase so it can't put glucose in the blood!
 
 # Effect: Rapid uptake within 10–30 min after insulin; also drops glucose during activity.
 
@@ -40,6 +50,16 @@ Role: Uptakes glucose for fat synthesis and storage.
 Triggers: Insulin.
 
 Effect: Mild-to-moderate effect on glucose, dependent on nutritional state.
+
+
+Ketogenesis 
+  No glucose produced here, but reduces brain glucose need and can indirectly reduce hepatic glucose output demand. 
+  Trigger (low insulin, high glucagon, prolonged fasting or carb restriction This is like step one of hepatic gluconeogenesis)
+
+
+Leptin producer
+as leptin gets lower the HPA freaks out and says we need more energy, we gotta eat
+
 """
 
 #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  
@@ -74,37 +94,15 @@ Effect: Minor constant drain.
 #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  
 """
 
-
-
-19. Inflammation / Illness / Infection
-
-Cytokines (like TNF-α, IL-6) can cause insulin resistance.
-
-Fever raises basal metabolic rate and glucose production.
-
 Ways Glucose is produced:
-Hepatic Glycogenolysis
-  Very Fast (Minutes)
-    Triggered by glucagon, epi, cortisol, low insulin
-    Stimulated by Cytokines (Inflammation)
-Hepatic Gluconeogenesis
-  breaking down metabolic byproducts (protein breakdown, fat breakdown, lactate - yielded up by cori cycle, ketogenesis, alanine cycle, whatever)
-    Triggered by Glucagon, Cortisol, Low Insulin, Growth Hormone, strongly upregulated by inflammation (e.g. cortisol, cytokines)
-Muscle Glycogenolysis
-  Generally doesn't increase blood glucose because use is local, but it lowers demand (at least until you run out of glycogen)
-Digestion
-  Carbohydrate
-    Complex (60-180 minutes)
-    Simple (15-30 minutes)
+
+
+
 Renal Gluconeogenesis
   Like a smaller 15% version of the liver's gluconeogenesis
     Triggers?
 
-Ketogenesis 
-  No glucose produced here, but reduces brain glucose need and can indirectly reduce hepatic glucose output demand. 
-  Trigger (low insulin, high glucagon, prolonged fasting or carb restriction This is like step one of hepatic gluconeogenesis)
-  
-?
+
 
 
 
@@ -143,12 +141,21 @@ class Liver:
 # Limits: Finite glycogen stores (~12–18h fasting reserve in dogs).
 
 # Effect: Rapid (minutes), peaking within 15–60 mins.
-
+# Hepatic Glycogenolysis
+#   Very Fast (Minutes)
+#     Triggered by glucagon, epi, cortisol, low insulin
+#     Stimulated by Cytokines (Inflammation)
+# Hepatic Gluconeogenesis
+#   breaking down metabolic byproducts (protein breakdown, fat breakdown, lactate - yielded up by cori cycle, ketogenesis, alanine cycle, whatever)
+#     Triggered by Glucagon, Cortisol, Low Insulin, Growth Hormone, strongly upregulated by inflammation (e.g. cortisol, cytokines)
 #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  
 
 class Pancreas:
   def __init__(self,organism):
     pass
+# glucagon, insulin, somatostatin
+# Sympathetic inhibition of insulin
+# Beta cells (insulin) inhibit alpha cells (glucagon)
 
 #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  
     
@@ -186,6 +193,10 @@ class Intestine:
 
 # Effect: Major post-prandial source. Fat and fiber slow absorption.
 
+# Digestion
+#   Carbohydrate
+#     Complex (60-180 minutes)
+#     Simple (15-30 minutes)
 
 #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  
 
@@ -250,6 +261,16 @@ class Canine:
 
     """
     self.cytokines
+    """
+    
+
+
+    19. Inflammation / Illness / Infection
+    
+    Cytokines (like TNF-α, IL-6) can cause insulin resistance.
+    
+    Fever raises basal metabolic rate and glucose production.
+    """
     self.incretins
         
     # 15. Incretins (GLP-1, GIP)
@@ -282,6 +303,19 @@ class Canine:
     Promotes fat/muscle glucose storage.
     """
     self.glucagon
+    """
+    pancreas production - low BGL (Main trigger)
+    High protein intake can stimulate glucagon
+    Exercise ( more specific maybe? )
+    Epi
+    Cortisol
+
+    Suppressed by
+    High BGL
+    Local Insulin Production (paracrine inhibition)
+    somatostatin
+    incretin
+    """
     self.epinephrine
     """
         13. Epinephrine (Adrenaline)
