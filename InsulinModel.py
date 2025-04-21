@@ -200,8 +200,9 @@ class Intestine:
 
 #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  #  
 
-class Activity(self,organism): # maybe just put this in muscle
-  pass
+class Activity:
+  def __init__(self,organism): # maybe just put this in muscle
+    pass
 
 # 18. Exercise / Movement
 
@@ -240,7 +241,7 @@ class Canine:
   def __init__(self, initial_bgl = 200):
     self.hydration = Hydration(self)
     self.BGL = initial_bgl
-    self.cortisol
+    self.cortisol = 0
     """
     12. Cortisol
     
@@ -259,7 +260,7 @@ class Canine:
     Encourages protein catabolism → amino acids for gluconeogenesis.
 
     """
-    self.cytokines
+    self.cytokines = 0
     """
     
 
@@ -270,7 +271,7 @@ class Canine:
     
     Fever raises basal metabolic rate and glucose production.
     """
-    self.incretins
+    self.incretins = 0
         
     # 15. Incretins (GLP-1, GIP)
     
@@ -283,7 +284,7 @@ class Canine:
     # Slightly inhibit glucagon.
     
     # Delay gastric emptying → slow glucose rise.
-    self.insulin
+    self.insulin = 0
     """
     10. Insulin
 
@@ -301,7 +302,7 @@ class Canine:
     
     Promotes fat/muscle glucose storage.
     """
-    self.glucagon
+    self.glucagon = 0
     """
     pancreas production - low BGL (Main trigger)
     High protein intake can stimulate glucagon
@@ -315,7 +316,7 @@ class Canine:
     somatostatin
     incretin
     """
-    self.epinephrine
+    self.epinephrine = 0
     """
         13. Epinephrine (Adrenaline)
     
@@ -333,8 +334,8 @@ class Canine:
     
     Vasoconstriction (affects perfusion/glucose distribution).
     """
-    self.somatostatin
-    self.growth_hormone
+    self.somatostatin = 0
+    self.growth_hormone = 0
     # 14. Growth Hormone
     # Role: Increases insulin resistance, especially in fat.
     # Triggers: Sleep, puberty, stress.
