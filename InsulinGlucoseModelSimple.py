@@ -33,15 +33,21 @@ class Canine:
 		self.BGL[0] = BGL
 		self.BGL_Rate = np.zeros_like(self.time)
 		self.constant_background_use_rate = 0 # Brain and stuff that uses glucose straight up
-		self.kidney_clearance_rate = 0 # 
+		self.kidney_clearance_rate = 2/20/1000 # 
+		# suppose dogs have a GFR (mL/min/kg) of about 2 (people are around 1.8, dogs are a bit faster)
+		# should divide by 10 for plasma to blood ratio
+		# multiply by bodyweight in kg
+		# so for benny let's guess - 2*10/10 = 2
+		# then there's only about 1/10 or 1/20 of the glucose that leaks out of the kidneys (that's a rough estimate)
+		# and you gotta do a dl to ml conversion, which is like 100
 		self.effective_insulin = np.zeros_like(self.time)
-		self.insulin_sensitivity = 0.6 #several things wrapped up in here, but probably just a scalar for dose 
+		self.insulin_sensitivity = 0.62 #several things wrapped up in here, but probably just a scalar for dose 
 		# reminder that peak is at about (k-1)*theta
-		self.insulin_curve_k = 3.0 # complexity of absorption process
+		self.insulin_curve_k = 4.0 # complexity of absorption process
 		self.insulin_curve_theta = 70.0 # average rate of insulin absorption processes
-		self.food_curve_k = 4.0 # complexity of absorption process
-		self.food_curve_theta = 5.0 # average rate of insulin absorption processes
-		self.food_sensitivity = 0.0 # has something to do with size and digestion efficiency
+		self.food_curve_k = 8.0 # complexity of absorption process
+		self.food_curve_theta = 10.0 # average rate of insulin absorption processes
+		self.food_sensitivity = 16.0 # has something to do with size and digestion efficiency
 		self.effective_food = np.zeros_like(self.time)
 
 
@@ -95,8 +101,8 @@ class Canine:
 		print('finished')
 
 	def plot_bgl(self):
-		plt.plot(self.time/60,self.BGL)
-		plt.xticks(np.arange(0, 25, 1))  # ticks from 0 to 24 every 1 hour
+		plt.plot(self.time/60 + 6,self.BGL)
+		plt.xticks(np.arange(6, 31, 1))  # ticks from 0 to 24 every 1 hour
 
 		plt.xlabel('Time (hours)')
 		plt.ylabel('BGL (mg/dl)')
@@ -104,20 +110,48 @@ class Canine:
 		plt.grid(True)
 		plt.show()
 
+	def plot_insulin(self):
+		plt.plot(self.time/60,self.effective_insulin)
+		plt.xticks(np.arange(0, 25, 1))  # ticks from 0 to 24 every 1 hour
+
+		plt.xlabel('Time (hours)')
+		plt.ylabel('insulin?')
+		plt.title('Insulin Curve')
+		plt.grid(True)
+		plt.show()
+
+	def plot_food(self):
+		plt.plot(self.time/60,self.effective_food)
+		plt.xticks(np.arange(0, 25, 1))  # ticks from 0 to 24 every 1 hour
+
+		plt.xlabel('Time (hours)')
+		plt.ylabel('food')
+		plt.title('Food Curve')
+		plt.grid(True)
+		plt.show()
+
+
+
 
 
 def main():
 	print('good luck!')
-	Benny = Canine()
-	Benny.dose_insulin(0, 3.0)
-	Benny.dose_food(60, 150)
-	Benny.dose_insulin(60*8, 3.0)
-	Benny.dose_food(60*9, 150)
-	Benny.dose_insulin(60*16, 3.0)
-	Benny.dose_food(60*17, 150)
+	Benny = Canine(BGL=370)
+	# Benny.dose_insulin(0, 5.0)
+	# Benny.dose_food(60*3, 100)
+
+
+	Benny.dose_insulin(1, 3.0)
+	Benny.dose_food(90, 130)
+	Benny.dose_insulin(60*8, 2.0)
+	Benny.dose_food(60*8+90, 130)
+	Benny.dose_insulin(60*16, 2.3)
+	Benny.dose_food(60*16+90, 130)
 
 	Benny.run()
 	Benny.plot_bgl()
+	Benny.plot_insulin()
+	Benny.plot_food()
 
 
 if __name__ == '__main__':
