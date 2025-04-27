@@ -2,15 +2,15 @@ from scipy.stats import gamma
 import numpy as np
 import matplotlib.pyplot as plt
 
-k = 2.0  # shape
-theta = 2.0  # scale
+# k = 2.0  # shape
+# theta = 2.0  # scale
 
-import numpy as np
-x = np.linspace(0, 20, 1000)
-y = gamma.pdf(x, a=k, scale=theta)
+# import numpy as np
+# x = np.linspace(0, 20, 1000)
+# y = gamma.pdf(x, a=k, scale=theta)
 
-plt.plot(x, y)
-plt.show()
+# plt.plot(x, y)
+# plt.show()
 
 
 def gamma_kernel(t, onset, k, theta):
@@ -28,21 +28,64 @@ class Canine:
 	def __init__(self, BGL = 250, step_size = 5, time = 24*60):
 		# 250mg/dl, 5 minute intervals, run for a day,
 		self.step_size = step_size
-		self.time = np.linspace(0, 24*60, 24*60/5)
+		self.time = np.linspace(0, 24*60, 24*60//5)
 		self.BGL = np.zeros_like(self.time)
 		self.BGL[0] = BGL
 		self.BGL_Rate = np.zeros_like(self.time)
+		self.constant_background_use_rate = 0 # Brain and stuff that uses glucose straight up
+		self.kidney_clearance_rate = 0 # 
 		self.effective_insulin = np.zeros_like(self.time)
-		self.insulin_sensitivity = 1.0 #several things wrapped up in here, but probably just a scalar for dose 
-		self.insulin_curve_k = 2.0 # complexity of absorption process
-		self.insulin_curve_theta = 2.0 # average rate of insulin absorption processes
+		self.insulin_sensitivity = 0.6 #several things wrapped up in here, but probably just a scalar for dose 
+		# reminder that peak is at about (k-1)*theta
+		self.insulin_curve_k = 3.0 # complexity of absorption process
+		self.insulin_curve_theta = 70.0 # average rate of insulin absorption processes
+		self.food_curve_k = 4.0 # complexity of absorption process
+		self.food_curve_theta = 5.0 # average rate of insulin absorption processes
+		self.food_sensitivity = 0.0 # has something to do with size and digestion efficiency
+		self.effective_food = np.zeros_like(self.time)
+
 
 	def dose_insulin(self, administration_time, units):
 		insulin_dose = lambda t: units * gamma_kernel(t, onset = administration_time, k=self.insulin_curve_k, theta=self.insulin_curve_theta)
 		self.effective_insulin += insulin_dose(self.time)
 
+		#Flawed, add mixed model with zinc later if desired. :)
+
+	def dose_food(self, administration_time, units):
+		# time in minutes, units in calories
+		food_dose = lambda t: self.food_sensitivity * units * gamma_kernel(t, onset = administration_time, k=self.food_curve_k, theta=self.food_curve_theta)
+		self.effective_food += food_dose(self.time)
+
 	def update(self, index):
+		if index == 0:
+			pass
+		else:
+
+			self.BGL[index] = (
+				self.BGL[index -1]
+				+ self.effective_food[index-1]
+				- self.step_size * self.BGL[index-1] * self.insulin_sensitivity * self.effective_insulin[index-1]
+				- self.step_size * self.constant_background_use_rate
+				- self.step_size * self.kidney_clearance_rate * max(0, self.BGL[index-1]-180)
+				)
 		pass
+
+
+# G'(t) = a_1 \, \Gamma_1(t) - a_2 \, \Gamma_2(t) \times G(t) - a_3 - a_4 \, \max(0, G(t)-180) + \epsilon(t)
+
+# So pretty much this. 
+# Where:
+
+# a_1 = food scaling
+
+# a_2 = insulin strength scaling
+
+# a_3 = constant background use
+
+# a_4 = kidney clearance rate
+
+# Epsilon = positive noise (cortisol) 
+
 
 	def run(self):
 		index = 0
@@ -51,10 +94,31 @@ class Canine:
 			index +=1
 		print('finished')
 
+	def plot_bgl(self):
+		plt.plot(self.time/60,self.BGL)
+		plt.xticks(np.arange(0, 25, 1))  # ticks from 0 to 24 every 1 hour
+
+		plt.xlabel('Time (hours)')
+		plt.ylabel('BGL (mg/dl)')
+		plt.title('Glucose Curve')
+		plt.grid(True)
+		plt.show()
+
 
 
 def main():
 	print('good luck!')
+	Benny = Canine()
+	Benny.dose_insulin(0, 3.0)
+	Benny.dose_food(60, 150)
+	Benny.dose_insulin(60*8, 3.0)
+	Benny.dose_food(60*9, 150)
+	Benny.dose_insulin(60*16, 3.0)
+	Benny.dose_food(60*17, 150)
+
+	Benny.run()
+	Benny.plot_bgl()
+
 
 if __name__ == '__main__':
 	main()
