@@ -25,10 +25,10 @@ def gamma_kernel(t, onset, k, theta):
 
 
 class Canine:
-	def __init__(self, BGL = 250, step_size = 5, time = 24*60):
+	def __init__(self, BGL = 250, step_size = 5, time = 24*60*500):
 		# 250mg/dl, 5 minute intervals, run for a day,
 		self.step_size = step_size
-		self.time = np.linspace(0, 24*60, 24*60//5)
+		self.time = np.linspace(0, time, 24*60//5)
 		self.BGL = np.zeros_like(self.time)
 		self.BGL[0] = BGL
 		self.BGL_Rate = np.zeros_like(self.time)
@@ -47,19 +47,21 @@ class Canine:
 		self.insulin_curve_theta = 70.0 # average rate of insulin absorption processes
 		self.food_curve_k = 8.0 # complexity of absorption process
 		self.food_curve_theta = 10.0 # average rate of insulin absorption processes
-		self.food_sensitivity = 16.0 # has something to do with size and digestion efficiency
+		self.food_sensitivity = 8.0 # has something to do with size and digestion efficiency
 		self.effective_food = np.zeros_like(self.time)
 
 
 	def dose_insulin(self, administration_time, units):
-		insulin_dose = lambda t: units * gamma_kernel(t, onset = administration_time, k=self.insulin_curve_k, theta=self.insulin_curve_theta)
+		insulin_dose = lambda t: units * (gamma_kernel(t, onset = administration_time, k= 3 , theta = 105) 
+			+ gamma_kernel(t, onset = administration_time, k=5, theta = 120))
 		self.effective_insulin += insulin_dose(self.time)
 
-		#Flawed, add mixed model with zinc later if desired. :)
 
 	def dose_food(self, administration_time, units):
 		# time in minutes, units in calories
-		food_dose = lambda t: self.food_sensitivity * units * gamma_kernel(t, onset = administration_time, k=self.food_curve_k, theta=self.food_curve_theta)
+		food_dose = lambda t: self.food_sensitivity * units * ( gamma_kernel(t, onset = administration_time, k=4, theta= 22) 
+			+ gamma_kernel(t, onset = administration_time, k=7, theta=24)
+			)
 		self.effective_food += food_dose(self.time)
 
 	def update(self, index):
@@ -101,51 +103,144 @@ class Canine:
 		print('finished')
 
 	def plot_bgl(self):
-		plt.plot(self.time/60 + 6,self.BGL)
-		plt.xticks(np.arange(6, 31, 1))  # ticks from 0 to 24 every 1 hour
+		plt.plot(self.time,self.BGL)
 
-		plt.xlabel('Time (hours)')
+		plt.xlabel('Time')
 		plt.ylabel('BGL (mg/dl)')
 		plt.title('Glucose Curve')
 		plt.grid(True)
 		plt.show()
 
 	def plot_insulin(self):
-		plt.plot(self.time/60,self.effective_insulin)
-		plt.xticks(np.arange(0, 25, 1))  # ticks from 0 to 24 every 1 hour
-
-		plt.xlabel('Time (hours)')
+		plt.plot(self.time,self.effective_insulin)
+		plt.xlabel('Time ')
 		plt.ylabel('insulin?')
 		plt.title('Insulin Curve')
 		plt.grid(True)
 		plt.show()
 
 	def plot_food(self):
-		plt.plot(self.time/60,self.effective_food)
-		plt.xticks(np.arange(0, 25, 1))  # ticks from 0 to 24 every 1 hour
-
-		plt.xlabel('Time (hours)')
+		plt.plot(self.time, self.effective_food)
+		plt.xlabel('Time ')
 		plt.ylabel('food')
 		plt.title('Food Curve')
 		plt.grid(True)
 		plt.show()
+
+def bin_glucose(g):
+    if g < 60:
+        return 0
+    elif g < 80:
+        return 1
+    elif g < 130:
+        return 2
+    elif g < 200:
+        return 3
+    elif g < 300:
+        return 4
+    elif g < 400:
+        return 5
+    else:
+        return 6
+
+def bin_glucose_rate(g):
+    if g < -3:
+        return 0
+    elif g < -1.5:
+        return 1
+    elif g < -0.5:
+        return 2
+    elif g < 0.5:
+        return 3
+    elif g < 1.5:
+        return 4
+    elif g < 3:
+        return 5
+    else:
+        return 6
+
+def bin_iob(i):
+	if i < 0.0025:
+        return 0
+    elif i < 0.005:
+        return 1
+    elif i < 0.0075:
+        return 2
+    elif i < 0.010:
+        return 3
+    elif i < 0.0175:
+        return 4
+    elif i < 0.0250:
+        return 5
+    else:
+        return 6
+
+def bin_fob(i):
+	if i < 2.5:
+        return 0
+    elif i < 5.0:
+        return 1
+    elif i < 7.5:
+        return 2
+    elif i < 10.0:
+        return 3
+    elif i < 15.0:
+        return 4
+    elif i < 20.0:
+        return 5
+    else:
+        return 6
+
+class Pump:
+	def __init__(self,canine):
+		self.canine=canine
+		self.qtable=defaultdict()
+	def train_dosing_scheme(self):
+		index = 0
+		while index < len(self.canine.time):
+			self.canine.update(index)
+			self.adjust_table(index) # reward / punish table
+			insulin_dose = self.choose_dose(index)
+			self.canine.dose_insulin(index,insulin_dose)
+			index+=1
+	def bgl_penalty(bgl):
+	    if 90 <= bgl <= 130:
+	        return 0
+	    elif bgl < 90:
+	        return 0.05 * ((90 - bgl) ** 2)  # steeper penalty for low BGL
+	    else:
+	        return 0.0005 * ((bgl - 130) ** 2)
+	def choose_dose(self,index):
+		pass 
+		# we can run 
+	def adjust_table(self,index):
+		pass 
+		# responsibility is proportional to the Gamma distribution working backwards (right?)
+		# times the penalty, and we'll keep track of the trials and calculate an average penalty I guess. 
+
+
+
+
 
 
 
 
 
 def main():
+	start = 0 # hours
+	cycle = 12 #hours
+	num_cycles = 1
 	print('good luck!')
-	Benny = Canine(BGL=370)
-	# Benny.dose_insulin(0, 5.0)
-	# Benny.dose_food(60*3, 100)
+	Benny = Canine(BGL=370,time = cycle*60*num_cycles)
+	for t in range(start, 720000, cycle*60):
+   		Benny.dose_food(t, 150)
 
 
-	Benny.dose_insulin(1, 3.0)
+	Benny.dose_insulin(1, 5.0)
 	Benny.dose_food(90, 130)
-	Benny.dose_insulin(60*8, 2.0)
+	Benny.dose_insulin(60*8, 5.0)
 	Benny.dose_food(60*8+90, 130)
-	Benny.dose_insulin(60*16, 2.3)
+	Benny.dose_insulin(60*16, 5)
 	Benny.dose_food(60*16+90, 130)
 
 	Benny.run()
@@ -156,6 +251,11 @@ def main():
 
 if __name__ == '__main__':
 	main()
+
+
+
+
+
 
 
 
