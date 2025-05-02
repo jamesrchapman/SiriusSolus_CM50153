@@ -23,6 +23,9 @@ def gamma_kernel(t, onset, k, theta):
     return effect
 
 
+DOSE_RANGE = [0.0, 0.01, 0.02, 0.05, 0.1, 0.15, 0.20, 0.25]
+
+# good ideas for state vector - bgl, bgl rate, time of day/cycle)
 
 class Canine:
 	def __init__(self, BGL = 250, step_size = 5, time = 24*60*500):
@@ -41,6 +44,7 @@ class Canine:
 		# then there's only about 1/10 or 1/20 of the glucose that leaks out of the kidneys (that's a rough estimate)
 		# and you gotta do a dl to ml conversion, which is like 100
 		self.effective_insulin = np.zeros_like(self.time)
+		self.insulin_contributions = dict()
 		self.insulin_sensitivity = 0.62 #several things wrapped up in here, but probably just a scalar for dose 
 		# reminder that peak is at about (k-1)*theta
 		self.insulin_curve_k = 4.0 # complexity of absorption process
@@ -49,12 +53,17 @@ class Canine:
 		self.food_curve_theta = 10.0 # average rate of insulin absorption processes
 		self.food_sensitivity = 8.0 # has something to do with size and digestion efficiency
 		self.effective_food = np.zeros_like(self.time)
+		self.insulin_doses = dict() # index_time -> dose
+		self.food_doses = dict() # index_time -> dose
 
 
 	def dose_insulin(self, administration_time, units):
 		insulin_dose = lambda t: units * (gamma_kernel(t, onset = administration_time, k= 3 , theta = 105) 
 			+ gamma_kernel(t, onset = administration_time, k=5, theta = 120))
+		self.insulin_contributions[administration_time] = insulin_dose
 		self.effective_insulin += insulin_dose(self.time)
+		# Could be altered by exercise
+
 
 
 	def dose_food(self, administration_time, units):
@@ -191,10 +200,44 @@ def bin_fob(i):
     else:
         return 6
 
+from dataclasses import dataclass
+
+@dataclass
+class Welford:
+    n: float = 0.0
+    mean: float = 0.0
+    M2: float = 0.0
+    def update(self, value: float, weight: float = 1.0):
+        self.n += weight
+        delta = value - self.mean
+        self.mean += (weight / self.n) * delta
+        delta2 = value - self.mean
+        self.M2 += weight * delta * delta2
+    def variance(self):
+        return self.M2 / self.n if self.n > 0 else 0.0
+    def stddev(self):
+        return self.variance() ** 0.5
+    def count(self):
+        return self.n
+    def reset(self):
+        self.n = 0.0
+        self.mean = 0.0
+        self.M2 = 0.0
+    def ucb1(self, total_trials: float, c: float = 1.0):
+        if self.n == 0:
+            return float('inf')
+        return self.mean + c * math.sqrt(math.log(self.n) / self.n)
+
 class Pump:
 	def __init__(self,canine):
-		self.canine=canine
-		self.qtable=defaultdict()
+		self.canine = canine
+		self.qtable = defaultdict(defaultdict(Welford)) # [bgl, bgl_rate, iob, fob][dose] -> Welford(n,reward_average,running sum of squares of differences from the mean)
+	def get_key(self,index):
+		key=(self.canine.bgl[index],self.canine.bgl_rate[index],self.canine.iob[index],self.canine.fob[index])
+		# Gotta bin the key
+		return key
+	def get_dose(self,index):
+		self.canine.insulin_doses[index]
 	def train_dosing_scheme(self):
 		index = 0
 		while index < len(self.canine.time):
@@ -203,20 +246,31 @@ class Pump:
 			insulin_dose = self.choose_dose(index)
 			self.canine.dose_insulin(index,insulin_dose)
 			index+=1
-	def bgl_penalty(bgl):
-	    if 90 <= bgl <= 130:
+	def bgl_penalty(self,index):
+	    if 90 <= self.canine.bgl[index] <= 130:
 	        return 0
-	    elif bgl < 90:
-	        return 0.05 * ((90 - bgl) ** 2)  # steeper penalty for low BGL
+	    elif self.canine.bgl[index] < 90:
+	        return 0.05 * ((90 - self.canine.bgl[index]) ** 2)  # steeper penalty for low BGL
 	    else:
-	        return 0.0005 * ((bgl - 130) ** 2)
+	        return 0.0005 * ((self.canine.bgl[index] - 130) ** 2)
 	def choose_dose(self,index):
+		key = self.get_key(index)
+		dose_to_use = DOSE_RANGE[0]
+		for dose in DOSE_RANGE:
+			if self.qtable[key][dose].ucb1
+			self.qtable[key][dose] for dose in DOSE_RANGE
 		pass 
 		# we can run 
+	def update_reward(self,index,weight,reward):
+		key = self.get_key(index)
+		dose = self.get_dose(index)
+		self.qtable[key][dose].update(reward,weight)
 	def adjust_table(self,index):
+		responsibility = self.canine.insulin_contributions[:][index]/self.canine.effective_insulin[index]
+		for dose_idx, weight in responsibility:
+			self.update_reward(dose_idx, weight, self.bgl_penalty)
 		pass 
-		# responsibility is proportional to the Gamma distribution working backwards (right?)
-		# times the penalty, and we'll keep track of the trials and calculate an average penalty I guess. 
+		# maybe we should account for a sense of "what the dose should have been" e.g. if bgl is high, don't punish a high insulin dose as much as a low dose. But I'm gonna skip it
 
 
 
