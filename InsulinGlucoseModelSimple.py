@@ -2,6 +2,7 @@ from scipy.stats import gamma
 import numpy as np
 import matplotlib.pyplot as plt
 from collections import defaultdict
+import math 
 
 # k = 2.0  # shape
 # theta = 2.0  # scale
@@ -12,6 +13,7 @@ from collections import defaultdict
 
 # plt.plot(x, y)
 # plt.show()
+import pdb
 
 
 def gamma_kernel(t, onset, k, theta):
@@ -24,20 +26,20 @@ def gamma_kernel(t, onset, k, theta):
     return effect
 
 
-DOSE_RANGE = [0.0, 0.01, 0.02, 0.05, 0.1, 0.15, 0.20, 0.25]
+DOSE_RANGE = 10* np.array([0.0, 0.05, 0.1, 0.15, 0.20, 0.25])
 
-# good ideas for state vector - bgl, bgl rate, time of day/cycle)
+# good ideas for state vector - bgl, bgl rate, time of day/cycle) 
 
 class Canine:
-    def __init__(self, BGL = 250, step_size = 5, time = 24*60*500):
+    def __init__(self, BGL = 250, step_size = 1, time = 24*60*500):
         # 250mg/dl, 5 minute intervals, run for a day,
         self.step_size = step_size
-        self.time = np.linspace(0, time, 24*60//5)
-        self.BGL = np.zeros_like(self.time)
+        self.time = np.arange(0,time)
+        self.BGL = np.zeros_like(self.time, dtype=np.float64)
         self.BGL[0] = BGL
-        self.BGL_Rate = np.zeros_like(self.time)
-        self.iob=np.zeros_like(self.time)
-        self.fob=np.zeros_like(self.time)
+        self.BGL_Rate = np.zeros_like(self.time, dtype=np.float64)
+        self.iob=np.zeros_like(self.time, dtype=np.float64)
+        self.fob=np.zeros_like(self.time, dtype=np.float64)
 
         self.constant_background_use_rate = 0 # Brain and stuff that uses glucose straight up
         self.kidney_clearance_rate = 2/20/1000 # 
@@ -47,7 +49,7 @@ class Canine:
         # so for benny let's guess - 2*10/10 = 2
         # then there's only about 1/10 or 1/20 of the glucose that leaks out of the kidneys (that's a rough estimate)
         # and you gotta do a dl to ml conversion, which is like 100
-        self.effective_insulin = np.zeros_like(self.time)
+        self.effective_insulin = np.zeros_like(self.time, dtype=np.float64)
         self.insulin_contributions = dict() # administration time -> 
         self.insulin_sensitivity = 0.62 #several things wrapped up in here, but probably just a scalar for dose 
         # reminder that peak is at about (k-1)*theta
@@ -56,10 +58,12 @@ class Canine:
         self.food_curve_k = 8.0 # complexity of absorption process
         self.food_curve_theta = 10.0 # average rate of insulin absorption processes
         self.food_sensitivity = 8.0 # has something to do with size and digestion efficiency
-        self.effective_food = np.zeros_like(self.time)
+        self.effective_food = np.zeros_like(self.time, dtype=np.float64)
         self.insulin_doses = dict() # index_time -> dose
         self.food_doses = dict() # index_time -> dose
 
+    def insulin_kernel(self,time,units=1):
+        return gamma.pdf(time, a =3, scale = 105) + gamma.pdf(time, a = 5, scale = 120)
 
     def dose_insulin(self, administration_time, units):
         insulin_dose = lambda t: units * (gamma_kernel(t, onset = administration_time, k= 3 , theta = 105) 
@@ -121,6 +125,7 @@ class Canine:
         plt.xlabel('Time')
         plt.ylabel('BGL (mg/dl)')
         plt.title('Glucose Curve')
+        plt.ylim(0, 450)  # Focus on 0 to 400 mg/dL
         plt.grid(True)
         plt.show()
 
@@ -212,7 +217,7 @@ class Welford:
     mean: float = 0.0
     M2: float = 0.0
     def update(self, value: float, weight: float = 1.0):
-        if weight < 1:
+        if weight < 1e-4:
             pass
         else:
             self.n += weight
@@ -233,12 +238,18 @@ class Welford:
     def ucb1(self, c: float = 1.0):
         if self.n == 0:
             return float('inf')
-        return self.mean + c * math.sqrt(math.log(self.n) / self.n)
+        else:
+            # print(self.n)
+            pass
+        return self.mean + c * math.sqrt(abs(math.log(self.n) / self.n))
 
 class Pump:
-    def __init__(self,canine):
+    def __init__(self,canine, dose_step_size = 180, feed_step_size = 60*8, feed_calories=150):
         self.canine = canine
         self.qtable = defaultdict(lambda: defaultdict(Welford))
+        self.dose_step_size = dose_step_size # a dose every __ minutes
+        self.feed_step_size = feed_step_size
+        self.feed_calories = feed_calories
  # [bgl, bgl_rate, iob, fob][dose] -> Welford(n,reward_average,running sum of squares of differences from the mean)
     def get_key(self,index):
         key=(bin_glucose (self.canine.BGL[index]), bin_glucose_rate(self.canine.BGL_Rate[index]), bin_iob (self.canine.iob[index]), bin_fob (self.canine.fob[index]))
@@ -246,59 +257,83 @@ class Pump:
         # Gotta bin the key
         return key
     def get_dose(self,index):
-        self.canine.insulin_doses[index]
+        try:
+            return self.canine.insulin_doses[index]
+        except KeyError:
+            return 0
     def train_dosing_scheme(self):
+
         index = 0
         while index < len(self.canine.time):
+
             self.canine.update(index)
-            self.adjust_table(index) # reward / punish table
-            insulin_dose = self.choose_dose(index)
-            print("Chose dose: ")
-            print(insulin_dose)
-            self.canine.dose_insulin(index,insulin_dose)
+            if index % self.dose_step_size == 0:
+                self.adjust_table(index) # reward / punish table
+                insulin_dose = self.choose_dose(index)
+                # print("Chose dose: "+str(insulin_dose) +"at time "+str(index))
+                self.canine.dose_insulin(index,insulin_dose)
+            if index % self.feed_step_size == 0:
+                self.canine.dose_food(index,self.feed_calories)
             index+=1
     def bgl_penalty(self,index):
         if 90 <= self.canine.BGL[index] <= 130:
             return 0
         elif self.canine.BGL[index] < 90:
-            return 0.05 * ((90 - self.canine.BGL[index]) ** 2)  # steeper penalty for low BGL
+            return 0.05 * ((90 - self.canine.BGL[index]) ** 3)  # steeper penalty for low BGL
         else:
             return 0.0005 * ((self.canine.BGL[index] - 130) ** 2)
     def choose_dose(self,index):
         key = self.get_key(index)
         dose_to_use = DOSE_RANGE[0]
         for dose in DOSE_RANGE:
-            print(self.qtable[key][dose].ucb1())
-            print(self.qtable[key][dose_to_use].ucb1())
+            # print(self.qtable[key][dose].ucb1())
+            # print(self.qtable[key][dose_to_use].ucb1())
             if self.qtable[key][dose].ucb1() > self.qtable[key][dose_to_use].ucb1():
                 dose_to_use = dose
         return dose_to_use
     def update_reward(self,index,weight,reward):
         key = self.get_key(index)
         dose = self.get_dose(index)
-        print("- - - - - ")
-        print(index)
-        print(key)
-        print(dose)
-        print(reward)
-        print(weight)
+        # print("- - - - - ")
+        # print(index)
+        # print(key)
+        # print(dose)
+        # print(reward)
+        # print(weight)
         welford_entry = self.qtable[key][dose]
-        print(welford_entry.mean)
+        # print(welford_entry.mean)
         welford_entry.update(reward, weight)
-        print(welford_entry.mean)
+        # print(welford_entry.mean)
 
     def adjust_table(self,index):
         threshold = 1e-4
-        responsibility = []
-        for dose_time in self.canine.insulin_doses.keys():
-            ei = self.canine.effective_insulin[index]
-            if abs(ei) < threshold:
-                responsibility.append(0.0)  # or skip, or use some fallback
-            else:
-                responsibility.append(self.canine.insulin_contributions[dose_time][index] / ei)
-        for dose_idx, weight in enumerate(responsibility):
-            if weight>threshold:
-                self.update_reward(dose_idx, weight, -1*self.bgl_penalty(index))
+
+        dose_penalty = -1*self.bgl_penalty(index)
+
+        # so we iterate over the doses that we've done up to this index
+        # for each of these doses, we calculate the weight as just a unitless gamma distribution following 
+        # the insulin distribution - evaluated at the index of interest
+        # then you just do the little threshold check and update the reward
+        for dose_index in range(0,index,self.dose_step_size):
+            dose_weight = self.canine.insulin_kernel(index - dose_index)
+            if dose_weight > threshold:
+                self.update_reward(dose_index,dose_weight,dose_penalty)
+
+
+
+
+        # responsibility = []
+        # for dose_time in self.canine.insulin_doses.keys():
+        #     ei = self.canine.effective_insulin[index]
+        #     if abs(ei) < threshold:
+        #         responsibility.append(0.0)  # or skip, or use some fallback
+        #     else:
+        #         responsibility.append(self.canine.insulin_contributions[dose_time][index] / ei)
+        # for dose_idx, weight in enumerate(responsibility):
+        #     if weight>threshold:
+        #         self.update_reward(dose_idx, weight, -1*self.bgl_penalty(index))
+        #     else:
+        #         print(weight)
         # maybe we should account for a sense of "what the dose should have been" e.g. if bgl is high, don't punish a high insulin dose as much as a low dose. But I'm gonna skip it
 
 
@@ -311,18 +346,18 @@ class Pump:
 
 def main():
     start = 0 # hours
-    cycle = 12 #hours
-    num_cycles = 1000
     print('good luck!')
-    Benny = Canine(BGL=370,time = cycle*60*num_cycles)
+    Benny = Canine(BGL=370,time = 10000)
     # Benny.dose_insulin(1, 5.0)
     # Benny.dose_food(90, 130)
     # Benny.dose_insulin(60*8, 5.0)
     # Benny.dose_food(60*8+90, 130)
     # Benny.dose_insulin(60*16, 5)
     # Benny.dose_food(60*16+90, 130)
+    print(Benny.insulin_doses)
     Sirius = Pump(Benny)
     Sirius.train_dosing_scheme()
+
 
 
     # for t in range(start, 720000, cycle*60):
@@ -331,8 +366,8 @@ def main():
 
 
     # Benny.run()
-    # Benny.plot_bgl()
-    # Benny.plot_insulin()
+    Benny.plot_bgl()
+    Benny.plot_insulin()
     # Benny.plot_food()
 
 
