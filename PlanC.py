@@ -38,6 +38,7 @@ class PlanCInsulinSim:
 
             # Predictive meal bolus (3.5 hours before meal)
             for meal_time in self.predicted_meal_times:
+                print("hu")
                 if t == int(meal_time - 210):  # 3.5 hours before
                     kernel = self.triangle_kernel(t, self.insulin_duration)
                     self.insulin_effect += kernel * 0.5  # predictive bolus

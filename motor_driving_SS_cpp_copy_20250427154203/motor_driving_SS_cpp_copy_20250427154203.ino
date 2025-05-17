@@ -54,5 +54,5 @@ void loop() {
   }
 
   // Wait 20 seconds
-  delay(20000);
+  // delay(20000);
 }
