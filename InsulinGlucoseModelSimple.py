@@ -259,7 +259,7 @@ class Welford:
         return self.mean + c * math.sqrt(abs(math.log(self.n) / self.n))
 
 class Pump:
-    def __init__(self,canine, dose_step_size = 30, feed_step_size = 6, feed_calories=1.50):
+    def __init__(self,canine, dose_step_size = 30, feed_step_size = 60*8, feed_calories=150):
         self.canine = canine
         self.qtable = defaultdict(lambda: defaultdict(Welford))
         self.dose_step_size = dose_step_size # a dose every __ minutes
