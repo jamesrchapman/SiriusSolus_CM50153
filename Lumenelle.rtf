@@ -1,0 +1,203 @@
+
+
+
+P0 – Inbox
+
+
+
+
+
+
+
+
+
+
+
+P1 – Blockers & Fragile Points
+
+These are things that must be resolved for anything else to proceed or stay stable. Includes:
+Technical bottlenecks
+Uncertainties that affect everything else
+Infrastructure or toolchain issues
+Fragile stuff that breaks the system
+Ask: If I don’t do this, does everything else stall or fall apart?
+
+Tasks:
+Mk 3: Lumenelle 
+Electrochemical push feasibility
+Sketching
+Assumptions
+Design
+Layout
+Needs
+Safety/Failsafes
+Basic MOA Verification
+Prototyping design
+How do you create a sealed chamber
+Reusability
+How does the fucking needle work I never figured that out
+We’re on Mk 4 Now (Lumi-2)
+Mk4 really didn’t work. 
+Let’s try Mk 5 
+This is lu
+
+
+
+
+Yeah lumenelle is kinda meh
+
+ Hardware Checklist for This Setup - mk 2 lumi
+1.0 mm ID silicone tubing (~15 cm)
+
+
+Small Y-connector (Luer or barbed)
+
+
+Sliding slug (PTFE, rubber plug, or trimmed IV stopper)
+Basically we’ll do a fishing rod, coming out a y-connector
+
+
+Luer-sealing cap, septum, or valve on refill port
+
+
+Cannula or outlet tubing on the front leg
+
+
+Leadscrew or SMA drive to push piston into slug
+
+We’re gonna work with just a tubing, no reservoir, load up through a y connector, just gotta pick a push mechanism. Which, I still don’t really know, but maybe we run a wire filament and coil around a tiny motor. -shrug-
+That’s pretty much it, simple setup. 
+Coil on a tiny motor
+Gotta figure out how to seal one end of a … idk more like a W connector, like two Ys, but we gotta take one and plug it up silicone and let the line out of it, could be miniscule. 
+
+Issue - Not sanitary, the line being in the solution. 
+
+Need another driver idea. -sigh-
+
+
+P2 – Core Functionality
+The essential features or systems that define your project. Not necessarily risky, but critical to deliver.
+Backbone logic
+Primary workflow
+Minimum viable interface
+Ask: If I stripped the project down to just the core, what has to work?
+
+
+Tasks:
+
+I wonder if I could get funding to do this stuff - like a go fund me or something 
+[ ] Build syringe cartridge mount compatible with lead screw and motor housing
+[ ] Finish Android control app prototype for real-time dose monitoring and override
+[ ] Refine chelation buffer preparation for safety, sterility, and dose accuracy
+
+
+
+P3 – High-Leverage Enhancements
+
+Stuff that isn’t essential, but either increases usability, reduces future work, or offers big gains.
+Smart defaults
+Modularization
+Time-saving automations
+Clever reuse
+Ask: What would save me time or increase impact if I did it now instead of later?
+
+Tasks:
+ Finalize tubing selection (stiff silicone or PU/Teflon tubing)
+Develop least squares model to approximate digestion and insulin effect curves (use kernels with time lags)
+[ ] Consider adding second nut or internal spring to lock/push syringe block from both ends
+Order polyurethane or Teflon tubing for testing
+Build sealed housing for syringe, pump, and electronics
+Create housing to secure boards, batteries, and wiring
+[ ] Set up logging and timestamped event tracking (injection, food, walk, etc)
+[ ] Define rules for hypo forecasting and intervention (based on Libre trend and derivative)
+[ ] Tune microbolus strategy (how to pulse to manage risk and sustain clearance)
+[ ] [ ] Plan communication bridge between Libre data and insulin pump logic
+You’d normally solve that with a boost converter (e.g., 3.7V → 5V) or a low dropout regulator, but that takes space and adds complexity.   4. Also, LiPos without protection circuits can catch fire if overcharged/discharged too much. So you also need:  A charger board (e.g., TP4056)  Ideally a protection circuit for undervoltage cutoff
+Food insulin dose invariance: Check chatgpt make a little least squares model and see how it goes.
+
+
+
+
+P4 – Ideas & Experiments
+
+New, uncertain, or creative features. These are valuable for vision or future direction, but not needed for baseline success.
+Prototypes of new interactions
+Side features
+Novel architecture attempts
+Ask: Is this exploratory? Is it something I’d like to try but can defer?
+
+Tasks:
+Test real-time forecasting + auto-adjusting dose control
+Oh eventually it would be cool to make a cheaper, open source libre.
+Expand algorithm to multi-parameter model (food, insulin, glucose, activity)
+Mark II: Advanced Wearable Pod
+[ ] Design compact, Omnipod-style adhesive pod system
+[ ] Draw and plan solenoid pump-based miniature system
+[ ] Evaluate feasibility of spring-loaded needle insertion system
+[ ] Explore microfluidics for pump precision
+[ ] Consider upsizing Mark II solenoid pump if scale is an issue
+[ ] Build test enclosure for autoclaving, sealing, and safety
+[ ] Explore glove box or clean environment for sterile assembly
+[ ] Experiment with ball-and-tube style simplified pumping concept
+[ ] Design cute, small, smooth exterior housing to prevent snagging and improve wearability
+[ ] Source sufficiently small syringes for compact pod designs
+[ ] Experiment with fabricating custom micro-valves from silicone for precision flow control
+Sterile Glove Box
+Autoclave
+Reduce system footprint to fully wearable adhesive pod
+Smaller, swappable, chargeable battery
+A hand drill
+Try modifying the insulin kernel in the algorithm I wrote up for faster acting insulin (say 1 hour peaking)
+Oh, how about an adhesive for a button for Benny that doesn't require shaving him as much, that's kinda sad and also, a little harder to scratch off maybe.
+Garage biotech wishlist
+I wonder if Hailey and I could get like a lab and live in it. Or idk, what the minimum space/safety/cleanliness I would need to like live and do lab stuff. 
+
+
+P5 – Aesthetics & Polish
+
+Making things look, sound, or feel good. UX details, microcopy, animations, style.
+Visual design
+
+
+Transitions
+
+
+Refining the tone of prompts/messages
+
+
+Layout consistency
+
+
+Ask: Does this make the project feel better, but not work better?
+Tasks:
+
+
+Velcro-mount to existing dog harness for wearable use (buy velcro)
+
+
+
+P6 – Rituals & Cleanup
+
+Low-effort things that help clear your mind or keep your system healthy.
+Code cleanup
+
+
+Organizing notes
+
+
+Writing README or internal docs
+
+
+Refactoring low-priority stuff
+
+
+Ask: Does this clear mental load or help future me without pushing anything forward directly?
+Tasks:
+Open source design + publish experimental results
+
+
+
+
+
+
+

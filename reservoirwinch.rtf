@@ -1,0 +1,123 @@
+Reservoir + Winch
+
+
+Eh... let's just think about this stupidly for a moment. 
+
+We have a needle/cannula - basically copying omnipod. We're going to put in a rectangular reservoir to hold the insulin and then we push that reservoir with an external actuator. 
+
+So, the exact mechanism of the actuator is secondary to the knowledge that it locks and can be removed and replaced. 
+
+
+
+Got it 👍 — here’s a bullet-point list of decisions you’ve basically made / need to make, and next steps to prototype:
+
+
+---
+
+Design Decisions
+
+Architecture:
+
+Pod = simple sealed reservoir (v0: syringe-style cartridge).
+
+External actuator (pen) = reusable lead screw actuator
+
+Dock / undock model → no moving parts left in pod.
+
+
+Reservoir choice (for v0):
+
+Start with a “fat syringe” concept (3D print barrel or repurpose 1 mL TB syringe).
+
+Plunger with seal at tip (O-ring, silicone stopper, or short tubing cap).
+
+Outlet = stainless stub / Luer stub with check valve near outlet.
+
+Adhesive/housing later; focus on dosing mechanics now.
+
+
+Actuator (pen):
+
+Lead screw driver with fixed nut in pen body.
+
+Nose pushes plunger pad.
+
+Docking = ¼-turn bayonet collar so pen body anchors to pod barrel.
+
+
+Sterility & materials:
+
+v0 = print barrels only for water test (not sterile).
+
+Later = migrate to real syringe barrels or injection-molded COC/COP.
+
+Diaphragm / rolling designs postponed until v1+.
+
+
+
+
+---
+
+Things To Do (Action List)
+
+1. Choose lead screw pitch (0.5 mm/rev vs 1.0 mm/rev).
+
+0.5 mm = finer precision, more turns.
+
+1.0 mm = faster dosing, less precision.
+
+
+
+2. Design & print 3 test barrels (IDs ~3 mm, 4.7 mm, 7 mm; stroke stops sized for ~0.3 mL capacity).
+
+
+3. Design plunger seals:
+
+Try O-rings, silicone caps, or cut tubing sections.
+
+Chamfer bore for smoother entry.
+
+
+
+4. Print docking collar:
+
+Holds syringe barrel.
+
+Provides bayonet face for pen to latch.
+
+
+
+5. Build actuator pen:
+
+Lead screw, nut, knob.
+
+Detent wheel (12 or 24 notches).
+
+Nose pusher pad (flat Delrin/nylon insert).
+
+
+
+6. Integrate outlet:
+
+Attach short stainless stub or Luer stub.
+
+Plumb into low-crack check valve (bench only).
+
+
+
+7. Bench test with water:
+
+Gravimetric calibration → U/click.
+
+Rebound/drip check (with valve).
+
+Linearity check across stroke.
+
+Bump test (dose, undock, jostle, confirm no leak).
+
+
+
+8. Pick the sweet spot (bore ID + screw pitch + detents) that gives the precision & pod thickness you like.
+
+
+9. Plan v1: swap barrel for a real syringe body or machined COC/COP; design adhesive pod housing; start thinking about sterile fill.
