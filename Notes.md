@@ -18,3 +18,21 @@ I mean just assume anything will break
 you really really don't want to overdose 
 that's probably the biggest immediate issue because it's like fatal. 
 
+
+
+Dog diabetes advice generally
+
+Right now, it seems like the biggest problem is that a dog probably won't wear an insulin pump, like ever, without fucking it up majorly. 
+
+
+## Bottleneck
+
+## Reinforcement
+
+## Important
+Back up to GitHub
+
+## Experiment
+
+## Aesthetic
+
