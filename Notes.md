@@ -25,6 +25,10 @@ Dog diabetes advice generally
 Right now, it seems like the biggest problem is that a dog probably won't wear an insulin pump, like ever, without fucking it up majorly. 
 
 
+Other Considerations: 
+monitoring without being at home
+remote feeder
+
 ## Bottleneck
 
 ## Reinforcement
