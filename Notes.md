@@ -1,42 +1,18 @@
-get a pump
-get a cannula/catheter
-get some tubing
-
-how am I gonna control it
-
-how am I gonna read blood glucose levels
-
-how are we going to get redundancies 
-
-wear and tear/protection
-batteries fail
-tubing fucks up
-insulin needs to be replaced
-
-other issues: 
-I mean just assume anything will break 
-you really really don't want to overdose 
-that's probably the biggest immediate issue because it's like fatal. 
+# Bottleneck
+- Interact with the Libre API and pipe it into a program of some kind
+- Alarm App Connected to Libre API with Derivative Averaging
+- Remote Feeder Research
 
 
+# Reinforcement
+- 
 
-Dog diabetes advice generally
+# Important
 
-Right now, it seems like the biggest problem is that a dog probably won't wear an insulin pump, like ever, without fucking it up majorly. 
+# Experiment
+- remote feeder
 
-
-Other Considerations: 
-monitoring without being at home
-remote feeder
-
-## Bottleneck
-
-## Reinforcement
-
-## Important
-Back up to GitHub
-
-## Experiment
-
-## Aesthetic
+# Aesthetic
+- Dog diabetes advice generally
+- Creating the winch-lichen model
 
