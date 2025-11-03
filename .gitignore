@@ -1,0 +1,48 @@
+# =========================
+#   🧹 CODEBASE SANITY FILTER
+# =========================
+
+# Ignore the Archive folder at the project root
+/Archive/
+
+# If you want to ignore *any* Archive folder anywhere, use this instead:
+# **/Archive/
+
+# -------------------------
+# IMAGES & ASSETS WE PRETEND DON'T EXIST
+# -------------------------
+# Common image formats
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.bmp
+*.tiff
+*.webp
+*.svg
+
+# Raw photos (because you're not Ansel Adams, you're writing code)
+*.nef
+*.cr2
+*.raw
+*.arw
+*.dng
+
+# Design exports that should never see version control
+*.psd
+*.xcf
+*.ai
+*.eps
+
+# Video because god forbid someone commits a .mov to Git again
+*.mp4
+*.mov
+*.avi
+*.mkv
+*.webm
+
+# Audio (if you're storing .wav files in source control, seek help)
+*.wav
+*.mp3
+*.flac
+*.ogg
