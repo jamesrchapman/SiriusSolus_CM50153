@@ -46,3 +46,7 @@
 *.mp3
 *.flac
 *.ogg
+
+
+# environment
+*.env
