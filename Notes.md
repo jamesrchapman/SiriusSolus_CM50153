@@ -1,6 +1,8 @@
 # Bottleneck
-- Interact with the Libre API and pipe it into a program of some kind
-- Alarm App Connected to Libre API with Derivative Averaging
+- Set up Webhook
+	- Test Alerts in Libre_Watch
+		- Concerned about what it does when you're working with less than 20 minutes of data initially
+		- Similarly for disconnections
 - Remote Feeder Research
 
 
@@ -11,6 +13,7 @@
 
 # Experiment
 - remote feeder
+- Factoring in Cycles
 
 # Aesthetic
 - Dog diabetes advice generally
