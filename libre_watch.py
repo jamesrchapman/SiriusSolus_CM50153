@@ -26,6 +26,7 @@ from typing import Deque, Tuple, Optional
 import requests
 import monkey_patch_librelinkup_tz  # patch FIRST
 from dotenv import load_dotenv
+load_dotenv()
 from libre_link_up import LibreLinkUpClient
 from dateutil import parser as dtparser
 from zoneinfo import ZoneInfo
@@ -206,16 +207,41 @@ class LibreWatcher:
         )
         self.client.login()
 
+    # def read_latest(self) -> Optional[Reading]:
+    #     m = self.client.get_latest_reading()  # pydantic model
+    #     data = m.model_dump(mode="json")
+    #     val = (data.get("glucose_value_mgdl") or data.get("value_mgdl")
+    #            or data.get("value") or data.get("ValueInMgPerDl"))
+    #     ts = (data.get("timestamp_iso") or data.get("timestamp")
+    #           or data.get("time") or data.get("Timestamp"))
+    #     if val is None or ts is None:
+    #         return None
+    #     dt = _parse_to_utc(ts)  # defensive parse
+    #     return Reading(ts_utc=dt, mgdl=float(val), source="linkup")
     def read_latest(self) -> Optional[Reading]:
-        m = self.client.get_latest_reading()  # pydantic model
+        m = self.client.get_latest_reading()
         data = m.model_dump(mode="json")
-        val = (data.get("glucose_value_mgdl") or data.get("value_mgdl")
-               or data.get("value") or data.get("ValueInMgPerDl"))
-        ts = (data.get("timestamp_iso") or data.get("timestamp")
-              or data.get("time") or data.get("Timestamp"))
+
+        # value can be in either of these:
+        val = (data.get("glucose_value_mgdl")
+               or data.get("value_mgdl")
+               or data.get("value_in_mg_per_dl")   # <— add this
+               or data.get("value")
+               or data.get("ValueInMgPerDl"))
+
+        # timestamp can be in either of these:
+        ts = (data.get("unix_timestamp")          # <— add this
+              or data.get("timestamp_iso")
+              or data.get("timestamp")
+              or data.get("time")
+              or data.get("Timestamp"))
+
         if val is None or ts is None:
+            # optional: one-time debug
+            print("[debug] latest missing fields:", data)
             return None
-        dt = _parse_to_utc(ts)  # defensive parse
+
+        dt = _parse_to_utc(ts)  # your parser already accepts numeric epochs
         return Reading(ts_utc=dt, mgdl=float(val), source="linkup")
 
 def _parse_to_utc(ts_any) -> datetime:
@@ -332,5 +358,85 @@ def main():
             print(f"[warn] {e.__class__.__name__}: {e}")
             time.sleep(args.poll_sec)
 
+
+
+def probe_once():
+    from libre_link_up import LibreLinkUpClient
+    user = os.getenv("LIBRE_LINK_UP_USERNAME")
+    pwd  = os.getenv("LIBRE_LINK_UP_PASSWORD")
+    url  = os.getenv("LIBRE_LINK_UP_URL", "https://api.libreview.io")
+    ver  = os.getenv("LIBRE_LINK_UP_VERSION", "4.16.0")
+
+    print("Logging in…", {"url": url, "ver": ver})
+    c = LibreLinkUpClient(username=user, password=pwd, url=url, version=ver)
+    c.login()
+    print("Logged in.")
+
+    # Try to enumerate connections/patients (names vary by lib version)
+    for name in ("get_connections", "list_connections", "connections"):
+        if hasattr(c, name):
+            conns = getattr(c, name)()
+            print("Connections:", conns)
+            break
+    else:
+        conns = None
+        print("No connection-listing method found on client; continuing")
+
+    # If there is a “select” or “set” connection concept, try first one
+    for name in ("select_connection", "set_connection", "set_patient", "use_connection"):
+        if hasattr(c, name) and conns:
+            try:
+                first = conns[0]
+                # patient id field name differs; try common ones
+                pid = getattr(first, "patientId", None) or getattr(first, "patient_id", None) \
+                      or getattr(first, "id", None)
+                getattr(c, name)(pid if pid is not None else first)
+                print(f"Selected connection {pid or first}")
+            except Exception as e:
+                print(f"Selecting connection failed ({name}): {e}")
+
+    # Now try to fetch a single latest reading (names differ by version)
+    reading_obj = None
+    for name in ("get_latest_reading", "get_latest_glucose_reading", "get_glucose_measurement"):
+        if hasattr(c, name):
+            try:
+                reading_obj = getattr(c, name)()
+                print(f"{name}() returned:", reading_obj)
+                break
+            except Exception as e:
+                print(f"{name}() errored: {e}")
+
+    if reading_obj is None:
+        print("No latest reading method worked.")
+        return
+
+    # Dump the model in multiple modes to see real keys
+    try:
+        print("model_dump(json):", reading_obj.model_dump(mode="json"))
+    except Exception as e:
+        print("model_dump(mode='json') failed:", e)
+    try:
+        print("model_dump(python):", reading_obj.model_dump(mode="python"))
+    except Exception as e:
+        print("model_dump(mode='python') failed:", e)
+
+    # Try generic asdict or __dict__ fallbacks
+    try:
+        import dataclasses as dc
+        if dc.is_dataclass(reading_obj):
+            print("asdict:", dc.asdict(reading_obj))
+    except Exception:
+        pass
+
+    print("dir(reading_obj):", [x for x in dir(reading_obj) if not x.startswith("_")])
+
+
+
+
 if __name__ == "__main__":
     main()
+    # # ---- call it once and quit to read output ----
+    # probe_once(); sys.exit(0)
+
+
+
