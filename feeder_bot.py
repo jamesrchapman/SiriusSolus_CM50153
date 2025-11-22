@@ -28,6 +28,7 @@ import matplotlib.pyplot as plt
 import discord
 from discord import app_commands
 from libre_link_up import LibreLinkUpClient
+from feeder_control import dispense  # your motor function
 
 # ============================ CONFIG =========================================
 
@@ -464,6 +465,24 @@ async def feed_cmd(interaction: discord.Interaction, portions: int):
         await interaction.response.send_message(f"feed queued: {portions} × 6g")
     else:
         await interaction.response.send_message(f"feed failed: {msg}")
+
+
+
+# slash command definition
+@tree.command(name="feed", description="Dispense portions of food for Benny.")
+@app_commands.describe(portions="Number of portions to dispense")
+async def feed(interaction: discord.Interaction, portions: int = 1):
+    await interaction.response.send_message(f"Feeding {portions} portion(s)...")
+
+    loop = asyncio.get_running_loop()
+    success = await loop.run_in_executor(None, dispense, portions)
+
+    if success:
+        await interaction.followup.send(f"✅ Dispensed {portions} portion(s).")
+    else:
+        await interaction.followup.send(f"⚠️ Feeder timed out before finishing.")
+
+# you can add other commands later in the same way
 
 # ---------- lifecycle ----------
 
