@@ -23,12 +23,14 @@ def angle_to_duty(angle):
 try:
     while True:
         # Sweep forward
+        print('forward')
         for angle in range(0, 181, 10):
             duty = angle_to_duty(angle)
             pwm.ChangeDutyCycle(duty)
             time.sleep(0.05)
 
         # Sweep back
+        print('back')
         for angle in range(180, -1, -10):
             duty = angle_to_duty(angle)
             pwm.ChangeDutyCycle(duty)
