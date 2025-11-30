@@ -8,6 +8,8 @@
 # If you want to ignore *any* Archive folder anywhere, use this instead:
 # **/Archive/
 
+glucose_log.csv
+
 # -------------------------
 # IMAGES & ASSETS WE PRETEND DON'T EXIST
 # -------------------------
