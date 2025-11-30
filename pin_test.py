@@ -1,40 +1,35 @@
 import RPi.GPIO as GPIO
 import time
+import sys
 
 class PinTester:
     """
-    Simple GPIO pin tester.
-    Toggles a single BCM pin HIGH/LOW repeatedly.
+    Toggler class for a single BCM GPIO pin.
     """
 
     def __init__(self, pin_number):
-        # Store the BCM pin number internally
+        # Store BCM pin number
         self.pin = pin_number
 
-        # Always use BCM numbering
+        # Use BCM numbering
         GPIO.setmode(GPIO.BCM)
 
-        # SETUP: configure pin as output
-        # try/except protects against pins already in use or garbage states
-        try:
-            GPIO.setup(self.pin, GPIO.OUT)
-        except RuntimeError as e:
-            print(f"Error setting up pin {self.pin}: {e}")
-            raise
+        # Configure pin as output
+        GPIO.setup(self.pin, GPIO.OUT)
 
     def toggle(self, interval=1.0):
         """
-        Toggle the pin HIGH/LOW at a fixed interval.
+        Toggle pin HIGH/LOW indefinitely.
         interval: seconds between toggles.
         """
         print(f"Toggling BCM pin {self.pin} every {interval} seconds. Ctrl+C to stop.")
 
+        state = False
         try:
-            state = False  # LOW to start
             while True:
                 state = not state
                 GPIO.output(self.pin, state)
-                print(f"Pin {self.pin} set to {'HIGH' if state else 'LOW'}")
+                print(f"Pin {self.pin} -> {'HIGH' if state else 'LOW'}")
                 time.sleep(interval)
         except KeyboardInterrupt:
             print("Stopping toggler.")
@@ -42,7 +37,24 @@ class PinTester:
             GPIO.cleanup(self.pin)
             print(f"Pin {self.pin} cleaned up.")
 
+def parse_pin_from_args():
+    """
+    Extract pin number from command-line arguments.
+    Usage: python pin_test.py 17
+    """
+    if len(sys.argv) < 2:
+        print("Usage: python pin_test.py <BCM_pin_number>")
+        sys.exit(1)
+
+    try:
+        pin = int(sys.argv[1])
+    except ValueError:
+        print("Error: pin must be an integer.")
+        sys.exit(1)
+
+    return pin
+
 if __name__ == "__main__":
-    # CHANGE THIS NUMBER to test different pins: e.g. 2, 3, 4, 17, 18, etc.
-    tester = PinTester(pin_number=2)
+    pin_to_test = parse_pin_from_args()
+    tester = PinTester(pin_to_test)
     tester.toggle(interval=0.5)
