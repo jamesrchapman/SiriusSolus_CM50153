@@ -57,4 +57,4 @@ def parse_pin_from_args():
 if __name__ == "__main__":
     pin_to_test = parse_pin_from_args()
     tester = PinTester(pin_to_test)
-    tester.toggle(interval=0.5)
+    tester.toggle(interval=3.0)
