@@ -29,6 +29,11 @@ import discord
 from discord import app_commands
 from libre_link_up import LibreLinkUpClient
 from feeder_control import dispense  # your motor function
+from servo_util import servo_rotate_once  # <-- add this
+
+
+rescue_lock = asyncio.Lock()
+
 
 # ============================ CONFIG =========================================
 
@@ -440,6 +445,31 @@ async def exercise_start_cmd(interaction: discord.Interaction, note: Optional[st
     )
     await interaction.response.send_message("exercise started")
 
+
+@tree.command(name="rescue", description="Run the rescue servo action once.")
+async def rescue_cmd(interaction: discord.Interaction):
+    # Immediate ack so Discord doesn't think the bot died
+    await interaction.response.defer(thinking=True)
+
+    # Prevent overlapping servo motions
+    async with rescue_lock:
+        loop = asyncio.get_running_loop()
+
+        try:
+            # Run the blocking GPIO/servo code off the event loop thread
+            # If servo_rotate_once returns True/False, we capture it.
+            result = await loop.run_in_executor(None, servo_rotate_once)
+        except Exception as e:
+            await interaction.followup.send(f"rescue failed: {type(e).__name__}: {e}")
+            return
+
+    # If your servo_rotate_once returns nothing, treat it as success
+    if result is None or result is True:
+        await interaction.followup.send("✅ rescue servo rotated once")
+    else:
+        await interaction.followup.send("⚠️ rescue servo reported failure")
+
+
 @tree.command(name="exercise_finish", description="Mark finish of the current exercise (optional note).")
 @app_commands.describe(note="e.g., duration, intensity")
 async def exercise_finish_cmd(interaction: discord.Interaction, note: Optional[str] = None):
@@ -453,19 +483,6 @@ async def exercise_finish_cmd(interaction: discord.Interaction, note: Optional[s
 async def exercise_brief_cmd(interaction: discord.Interaction, note: Optional[str] = None):
     append_event("exercise_brief", "brief", note=note or "")
     await interaction.response.send_message("exercise brief logged")
-
-@tree.command(name="feed", description="Dispense N portions (each ~6g).")
-@app_commands.describe(portions="Number of ~6g portions")
-async def feed_cmd(interaction: discord.Interaction, portions: int):
-    if portions < 1 or portions > 20:
-        await interaction.response.send_message("choose 1–20")
-        return
-    ok, msg = request_feed(portions)
-    if ok:
-        await interaction.response.send_message(f"feed queued: {portions} × 6g")
-    else:
-        await interaction.response.send_message(f"feed failed: {msg}")
-
 
 
 # slash command definition
