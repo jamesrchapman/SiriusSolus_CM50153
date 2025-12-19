@@ -15,7 +15,7 @@ if not BOT_TOKEN:
 from servo_util import servo_rotate_once
 
 # ---- discord setup ----
-intents = discord.Intents.none()
+intents = discord.Intents.default()
 intents.message_content = True
 bot = discord.Client(intents=intents)
 tree = app_commands.CommandTree(bot)
