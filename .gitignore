@@ -48,7 +48,8 @@ glucose_log.csv
 *.mp3
 *.flac
 *.ogg
-
+# Other
+*.csv
 
 # environment
 *.env
