@@ -1,8 +1,11 @@
 # Next
 
-- Let's put things in folders
-- Let's look at the dev.md
-- Let's change the way venv works so there's not two but it still runs on the pi
+## PI Compatibility Check
 
-- getting ahead of myself here - but we really need to fix the ssh disconnect issue with the pi
-- also we got a camera we can try using now.
+Make sure the project is still capable of running on pi + pi venv cleanup
+
+## SSH Disconnect Issue with PI
+
+## Camera Testing
+
+## Let's look at the dev.md
