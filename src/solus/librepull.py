@@ -1,5 +1,5 @@
 # pull_latest.py
-import monkey_patch_librelinkup_tz  # <-- import FIRST to apply the patch
+import src.solus.monkey_patch_librelinkup_tz as monkey_patch_librelinkup_tz  # <-- import FIRST to apply the patch
 
 from libre_link_up import LibreLinkUpClient
 import os, json

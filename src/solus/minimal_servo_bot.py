@@ -12,7 +12,7 @@ if not BOT_TOKEN:
     raise RuntimeError("DISCORD_BOT_TOKEN not set")
 
 # ---- import hardware action ----
-from servo_util import servo_rotate_once
+from src.solus.servo_util import servo_rotate_once
 
 # ---- discord setup ----
 intents = discord.Intents.default()

@@ -18,7 +18,7 @@ from typing import Optional, Deque, List, Dict
 from collections import deque
 
 import requests
-import monkey_patch_librelinkup_tz  # must be first
+import src.solus.monkey_patch_librelinkup_tz as monkey_patch_librelinkup_tz  # must be first
 from dotenv import load_dotenv
 from zoneinfo import ZoneInfo
 import matplotlib
@@ -28,8 +28,8 @@ import matplotlib.pyplot as plt
 import discord
 from discord import app_commands
 from libre_link_up import LibreLinkUpClient
-from feeder_control import dispense  # your motor function
-from servo_util import servo_rotate_once  # <-- add this
+from src.solus.feeder_control import dispense  # your motor function
+from src.solus.servo_util import servo_rotate_once  # <-- add this
 
 
 rescue_lock = asyncio.Lock()

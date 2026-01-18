@@ -24,11 +24,11 @@ from fastapi import FastAPI, HTTPException, Depends, Header
 from pydantic import BaseModel, Field
 
 # Your existing imports
-import monkey_patch_librelinkup_tz  # must be first
+import src.solus.monkey_patch_librelinkup_tz as monkey_patch_librelinkup_tz  # must be first
 from dotenv import load_dotenv
 from zoneinfo import ZoneInfo
 from libre_link_up import LibreLinkUpClient
-from feeder_control import dispense  # your motor function
+from src.solus.feeder_control import dispense  # your motor function
 
 # ============================ LOAD CONFIG ====================================
 

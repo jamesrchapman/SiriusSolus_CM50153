@@ -24,7 +24,7 @@ from datetime import datetime, timezone, timedelta
 from typing import Deque, Tuple, Optional
 
 import requests
-import monkey_patch_librelinkup_tz  # patch FIRST
+import src.solus.monkey_patch_librelinkup_tz as monkey_patch_librelinkup_tz  # patch FIRST
 from dotenv import load_dotenv
 load_dotenv()
 from libre_link_up import LibreLinkUpClient

@@ -1,7 +1,7 @@
 # libre_diag.py
 import os, json, sys
 from dotenv import load_dotenv
-import monkey_patch_librelinkup_tz  # patch first
+import src.solus.monkey_patch_librelinkup_tz as monkey_patch_librelinkup_tz  # patch first
 from libre_link_up import LibreLinkUpClient
 
 def j(obj): print(json.dumps(obj, indent=2)[:4000])  # safe-ish pretty print
