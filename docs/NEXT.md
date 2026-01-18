@@ -1,5 +1,7 @@
 # Next
 
+## Dump Ideas and Roughly Sort in Order of Importance
+
 ## PI Compatibility Check
 
 Make sure the project is still capable of running on pi + pi venv cleanup
