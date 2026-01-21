@@ -18,7 +18,13 @@ Kibble Autofeeder Alert
 
 Honey Drop Rescue
 
+honey drop rescue alert 
+
+training process
+
 Deadman's Switch and Watchdog Circuit Redundancies
+
+verification station (camera)
 
 ## Blocked
 
