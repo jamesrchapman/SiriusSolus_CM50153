@@ -4,27 +4,58 @@
 
 ## Next (up to ~10)
 
-Separate Elements:
+## Separate Elements
 
-Server Brains
+### Server Brains
 
-Server Driver
+30
 
-Kibble Autofeeder Serving Mechanism
+Designing what *should* happen under what circumstances.  
+Making FSM for network and failures  
 
-Kibble Autofeeder Bowl
+- Treatment Prediction (E.g. Kibble Grams, Honey)
+  - Delivery? Manual : Auto
+    - SYN (Time and Multiples)? Manual : Auto
 
-Kibble Autofeeder Alert
+### Server Driver
 
-Honey Drop Rescue
+23
 
-honey drop rescue alert
+### Honey Drop Rescue
 
-training process
+Server Brains, Server Driver ~ 18
 
-Deadman's Switch and Watchdog Circuit Redundancies
+### Verification station (camera)
 
-verification station (camera)
+Server Brains and Driver - 10
+
+### Kibble Autofeeder Bowl
+
+10
+
+### Deadman's Switch and Watchdog Circuit Redundancies
+
+Honey Drop ~ 8
+
+### Honey drop rescue alert
+
+7
+
+### Kibble Autofeeder Alert
+
+7
+
+### Kibble Autofeeder Serving Mechanism
+
+Brains, Driver, Bowl ~6
+
+### Training process
+
+Alerts ~ 6
+
+### Server LLU Subversion BLE Direct Hack
+
+4
 
 ## Blocked
 
