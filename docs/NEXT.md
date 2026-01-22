@@ -30,7 +30,4 @@ verification station (camera)
 
 ## Materials
 
-- Long Square Prism (Wood)
-- Square Plywood (Base)
 - Try a Two-State Bidirectional Solenoid (not a push pull)
--
