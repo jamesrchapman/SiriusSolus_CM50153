@@ -1,9 +1,10 @@
 # pull_latest.py
-import src.solus.monkey_patch_librelinkup_tz as monkey_patch_librelinkup_tz  # <-- import FIRST to apply the patch
+import src.solus.adapters.monkey_patch_librelinkup_tz as monkey_patch_librelinkup_tz  # <-- import FIRST to apply the patch
 
 from libre_link_up import LibreLinkUpClient
 import os, json
 from dotenv import load_dotenv
+
 load_dotenv()
 
 client = LibreLinkUpClient(
