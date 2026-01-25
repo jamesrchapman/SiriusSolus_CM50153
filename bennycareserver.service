@@ -3,13 +3,21 @@ Description=Benny's Server
 After=network-online.target
 Wants=network-online.target
 
+# restart-storm limiter:
+StartLimitIntervalSec=60
+StartLimitBurst=3
+
 [Service]
+Type=simple
 User=james
 WorkingDirectory=/home/james/benny-care-system
 EnvironmentFile=/home/james/benny-care-system/.env
+
 ExecStart=/home/james/benny-care-system/.venv/bin/python /home/james/benny-care-system/src/bennycaresystem/drivers/minimal_servo_bot.py
-Restart=always
-RestartSec=2
+
+# restart policy:
+Restart=on-failure
+RestartSec=5
 
 [Install]
 WantedBy=multi-user.target

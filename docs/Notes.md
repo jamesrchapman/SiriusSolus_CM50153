@@ -20,6 +20,19 @@ systemctl status bennycareserver.service
 journalctl -u bennycareserver.service -f
 ```
 
+1) Edit the unit file
+sudo nano /etc/systemd/system/bennycareserver.service
+
+2) Tell systemd to re-read unit files
+sudo systemctl daemon-reload
+
+3) Restart the service
+sudo systemctl restart bennycareserver.service
+
+4) Check status + logs
+systemctl status bennycareserver.service --no-pager
+journalctl -u bennycareserver.service -n 60 --no-pager
+
 ## Honey Feeder
 
 ### Designing Honey Feeder
