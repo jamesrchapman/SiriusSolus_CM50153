@@ -1,5 +1,25 @@
 # Next
 
+- Update Service
+
+```bash
+sudo cp bennycareserver.service /etc/systemd/system
+```
+
+- Enable and start
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable --now bennycareserver.service
+```
+
+- logs and status
+
+```bash
+systemctl status bennycareserver.service
+journalctl -u bennycareserver.service -f
+```
+
 ## Honey Feeder
 
 ### Designing Honey Feeder
