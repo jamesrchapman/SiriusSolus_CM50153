@@ -12,7 +12,7 @@ if not BOT_TOKEN:
     raise RuntimeError("DISCORD_BOT_TOKEN not set")
 
 # ---- import hardware action ----
-from src.solus.servo_util import servo_rotate_once
+from servo_util import servo_rotate_once
 
 # ---- discord setup ----
 intents = discord.Intents.default()
@@ -25,6 +25,7 @@ servo_lock = asyncio.Lock()
 
 
 RESCUE_CHANNEL_ID = int(os.getenv("RESCUE_CHANNEL_ID", "0"))  # optional
+
 
 # ---- MESSAGE TRIGGER (NEW) ----
 @bot.event
@@ -52,7 +53,6 @@ async def on_message(message: discord.Message):
             await message.channel.send("⚠️ rescue reported failure (message trigger)")
 
 
-
 # ---- slash command ----
 @tree.command(name="rescue", description="Run the rescue servo once.")
 async def rescue_cmd(interaction: discord.Interaction):
@@ -64,9 +64,7 @@ async def rescue_cmd(interaction: discord.Interaction):
             # run blocking GPIO code off the event loop
             result = await loop.run_in_executor(None, servo_rotate_once)
         except Exception as e:
-            await interaction.followup.send(
-                f"servo error: {type(e).__name__}: {e}"
-            )
+            await interaction.followup.send(f"servo error: {type(e).__name__}: {e}")
             return
 
     # treat None as success
@@ -75,15 +73,18 @@ async def rescue_cmd(interaction: discord.Interaction):
     else:
         await interaction.followup.send("⚠️ rescue reported failure")
 
+
 # ---- lifecycle ----
 @bot.event
 async def setup_hook():
     await tree.sync()
     print("slash commands synced")
 
+
 @bot.event
 async def on_ready():
     print(f"logged in as {bot.user}")
+
 
 # ---- entry ----
 bot.run(BOT_TOKEN)

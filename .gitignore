@@ -53,4 +53,5 @@ glucose_log.csv
 
 # environment
 *.env
+.env
 .venv
