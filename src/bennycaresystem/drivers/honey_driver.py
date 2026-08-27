@@ -21,7 +21,7 @@ MAX_G_PER_COMMAND = MAX_ML_PER_COMMAND * HONEY_G_PER_ML
 # Each powered pulse targets 1 ml using the existing actuator calibration.
 FORWARD_ML_PER_PULSE = 1.0
 FORWARD_PULSE_SECONDS = FORWARD_ML_PER_PULSE / ML_PER_SECOND
-FORWARD_PULSE_PAUSE_SECONDS = 2.0
+FORWARD_PULSE_PAUSE_SECONDS = 5.0
 
 _last_push_time = 0
 
