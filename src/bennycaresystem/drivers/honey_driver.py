@@ -1,3 +1,4 @@
+import math
 import time
 
 import RPi.GPIO as GPIO
@@ -81,12 +82,26 @@ def _run_forward(seconds: float):
         _stop()
 
 
+def _run_forward_continuous(seconds: float):
+    print(f"RUN FORWARD CONTINUOUS {seconds:.2f}s")
+    GPIO.output(HONEY_REV_PWM, GPIO.LOW)
+    GPIO.output(HONEY_FWD_PWM, GPIO.HIGH)
+
+    try:
+        time.sleep(seconds)
+    finally:
+        _stop()
+
+
 def _run_reverse(seconds: float):
     print(f"RUN REVERSE {seconds:.2f}s")
     GPIO.output(HONEY_FWD_PWM, GPIO.LOW)
     GPIO.output(HONEY_REV_PWM, GPIO.HIGH)
-    time.sleep(seconds)
-    _stop()
+
+    try:
+        time.sleep(seconds)
+    finally:
+        _stop()
 
 
 # ------------------------
@@ -97,7 +112,11 @@ def push_honey_seconds(seconds: float) -> bool:
     global _last_push_time
 
     now = time.time()
-    if seconds <= 0 or seconds > MAX_DURATION_SECONDS:
+    if (
+        not math.isfinite(seconds)
+        or seconds <= 0
+        or seconds > MAX_DURATION_SECONDS
+    ):
         return False
     if now - _last_push_time < MIN_INTERVAL_SECONDS:
         return False
@@ -112,11 +131,26 @@ def push_honey_seconds(seconds: float) -> bool:
 
 
 def retract_seconds(seconds: float) -> bool:
-    if seconds <= 0 or seconds > MAX_DURATION_SECONDS:
+    # The actuator's own end stop terminates physical reverse travel, so this
+    # positioning operation has no configured duration ceiling.
+    if not math.isfinite(seconds) or seconds <= 0:
         return False
 
     try:
         _run_reverse(seconds)
+        return True
+    except Exception:
+        _stop()
+        raise
+
+
+def push_actuator_seconds(seconds: float) -> bool:
+    """Move forward continuously for positioning; do not pulse or count honey."""
+    if not math.isfinite(seconds) or seconds <= 0:
+        return False
+
+    try:
+        _run_forward_continuous(seconds)
         return True
     except Exception:
         _stop()
@@ -128,7 +162,7 @@ def retract_seconds(seconds: float) -> bool:
 # ------------------------
 
 def push_honey_ml(ml: float) -> bool:
-    if ml <= 0 or ml > MAX_ML_PER_COMMAND:
+    if not math.isfinite(ml) or ml <= 0 or ml > MAX_ML_PER_COMMAND:
         return False
 
     seconds = ml / ML_PER_SECOND
@@ -136,11 +170,20 @@ def push_honey_ml(ml: float) -> bool:
 
 
 def retract_ml(ml: float) -> bool:
-    if ml <= 0 or ml > MAX_ML_PER_COMMAND:
+    if not math.isfinite(ml) or ml <= 0:
         return False
 
     seconds = ml / ML_PER_SECOND
     return retract_seconds(seconds)
+
+
+def push_actuator_ml(ml: float) -> bool:
+    """Rapidly advance an unloaded actuator using the existing ml calibration."""
+    if not math.isfinite(ml) or ml <= 0:
+        return False
+
+    seconds = ml / ML_PER_SECOND
+    return push_actuator_seconds(seconds)
 
 
 # ------------------------
@@ -148,7 +191,7 @@ def retract_ml(ml: float) -> bool:
 # ------------------------
 
 def push_honey_g(g: float) -> bool:
-    if g <= 0 or g > MAX_G_PER_COMMAND:
+    if not math.isfinite(g) or g <= 0 or g > MAX_G_PER_COMMAND:
         return False
 
     ml = g / HONEY_G_PER_ML
@@ -156,7 +199,7 @@ def push_honey_g(g: float) -> bool:
 
 
 def retract_g(g: float) -> bool:
-    if g <= 0 or g > MAX_G_PER_COMMAND:
+    if not math.isfinite(g) or g <= 0:
         return False
 
     ml = g / HONEY_G_PER_ML
